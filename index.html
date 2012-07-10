@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>AJDBC by vexsoftware</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>AJDBC</h1>
+        <h2>A simple and lightweight asynchronous wrapper library for JDBC.</h2>
+        <a href="https://github.com/vexsoftware/ajdbc" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>AJDBC</h2>
+
+<p>Hey there! We're Vex Software, and thanks for checking our project out. AJDBC (<strong>A</strong>synchronous <strong>J</strong>ava <strong>D</strong>ata<strong>B</strong>ase <strong>C</strong>onnectivity) is a lightweight, simple, and easy to use wrapper library that adds asynchronous functionality to JDBC. It's also a mouthful to pronounce! AJDBC has no dependencies except JRE 1.5, and works with anything that JDBC works with. AJDBC has been tested and works, but has not yet been tested in a production environment, so we're sorry if you encounter some problems. If you find any bugs, please report them on our <a href="https://github.com/vexsoftware/ajdbc/issues">issue page</a>.</p>
+
+<h3>Why AJDBC?</h3>
+
+<p>In high performance production environments, SQL is often used for storage. Java comes with a decent but relatively rudimentary solution for this - JDBC. Unfortunately, JDBC is <em>old</em>, <em>outdated</em>, and simply <em>not up to par</em> in terms of performance and flexible design. At Vex Software, we often found ourselves designing asynchronous callback multi-threaded systems from the ground up for many of our projects to simply maintain decent non-blocking server performance. We were simply surprised to find that, after all these years, the Java community still does not have a functional but simple asynchronous wrapper for the JDBC API. No bueno. We set out to solve this issue with AJDBC.</p>
+
+<h3>Limitations</h3>
+
+<p>Right now, AJDBC can handle the basics - SQL connections, queries, result sets, and prepared statements. We simply don't have the time to implement every single feature that JDBC has to offer right now. Don't worry though - AJDBC provides easy ways for you to seamlessly work with JDBC at the same time although in a synchronous context. If you really would like a specific feature implemented, go ahead and <a href="https://github.com/vexsoftware/ajdbc/issues">add an issue</a> on our Github project page.</p>
+
+<p>Here's the only catch though: you have to add your <code>DatabaseCompletionHandler</code> objects <em>before</em> calling <code>execute()</code>, and your queries will not complete (or even begin) until <code>execute()</code> is called. This ensures that there will be no spooky unexpected behavior that occurs, such as the SQL operation finishing in a separate thread before the completion handler even gets added!</p>
+
+<h3>Code Examples</h3>
+
+<p>We're programmers ourselves, and we know what programmers like to see when checking out a badass new tool to use - code examples. Enough with the paragraphs of English, it's time for some <em>Java</em> baby. We'll cut right to the chase and show you how simple AJDBC is to use.</p>
+
+<h4>Opening a connection asynchronously</h4>
+
+<p>Here's how you can open a connection to a database completely asynchronously. Aw yeah.</p>
+
+<div class="highlight">
+<pre><span class="c1">// Load up your JDBC driver like you normally would.</span>
+<span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"com.mysql.jdbc.Driver"</span><span class="o">);</span>
+
+<span class="c1">// Create our DatabaseFuture object (url is a normal JDBC URL).</span>
+<span class="n">DatabaseFuture</span><span class="o">&lt;</span><span class="n">AsynchronousConnection</span><span class="o">&gt;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">DatabaseConnectionFactory</span><span class="o">.</span><span class="na">openConnection</span><span class="o">(</span><span class="n">url</span><span class="o">);</span>
+
+<span class="c1">// Attach a completion handler to our future.</span>
+<span class="n">future</span><span class="o">.</span><span class="na">addCompletionHandler</span><span class="o">(</span><span class="k">new</span> <span class="n">DatabaseCompletionHandler</span><span class="o">&lt;</span><span class="n">AsynchronousConnection</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onComplete</span><span class="o">(</span><span class="n">DatabaseFuture</span><span class="o">&lt;</span><span class="n">AsynchronousConnection</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">,</span> <span class="n">AsynchronousConnection</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Our connection has successfully been opened.</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onException</span><span class="o">(</span><span class="n">DatabaseFuture</span><span class="o">&lt;</span><span class="n">AsynchronousConnection</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Uh oh! Unable to open the connection.</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+
+<span class="c1">// Finally, begin asynchronous execution of our SQL operation.</span>
+<span class="n">future</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span> <span class="c1">// Returns immediately.</span>
+</pre>
+</div>
+
+
+<h4>Executing a query and getting results</h4>
+
+<p>So now we've opened a connection asynchronously and have a reference to it called <code>c</code>. Now we'll show you how to whip out some badass code to execute a query totally asynchronously for that connection and obtain a result set.</p>
+
+<div class="highlight">
+<pre>
+<span class="c1">// Create an asynchronous statement.</span>
+<span class="n">AsynchronousStatement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">createStatement</span><span class="o">();</span>
+
+<span class="c1">// Initialize the query and obtain the future.</span>
+<span class="n">DatabaseFuture</span><span class="o">&lt;</span><span class="n">ResultSet</span><span class="o">&gt;</span> <span class="n">future</span> <span class="o">=</span> <span class="n">stmt</span><span class="o">.</span><span class="na">executeQuery</span><span class="o">(</span><span class="s">"SELECT * FROM foo WHERE bar = 'foobar'"</span><span class="o">);</span>
+
+<span class="c1">// Attach a completion handler to the future.</span>
+<span class="n">future</span><span class="o">.</span><span class="na">addCompletionHandler</span><span class="o">(</span><span class="k">new</span> <span class="n">DatabaseCompletionHandler</span><span class="o">&lt;</span><span class="n">ResultSet</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onComplete</span><span class="o">(</span><span class="n">DatabaseFuture</span><span class="o">&lt;</span><span class="n">ResultSet</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">,</span> <span class="n">ResultSet</span> <span class="n">results</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// We have a result set, parse it and handle it.</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onException</span><span class="o">(</span><span class="n">DatabaseFuture</span><span class="o">&lt;</span><span class="n">ResultSet</span><span class="o">&gt;</span> <span class="n">future</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Uh oh, something bad happened.</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+
+<span class="c1">// Finally, begin asynchronous execution of the operation.</span>
+<span class="n">future</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span>
+</pre>
+</div>
+
+
+<h3>Shortcuts and call-chaining</h3>
+
+<p>We know how verbose Java can get. It's often <em>painful</em> and sometimes downright <em>excruciating</em>. Borderline ridiculous. That's why we created some shortcuts for you. That's right, you can chain your AJDBC method calls to streamline and simplify the task at hand. For instance, you can chain these calls into one line of code:</p>
+
+<div class="highlight">
+<pre><span class="n">DatabaseConnectionFactory</span><span class="o">.</span><span class="na">openConnection</span><span class="o">(</span><span class="n">url</span><span class="o">).</span><span class="na">addCompletionHandler</span><span class="o">(</span><span class="n">handler</span><span class="o">).</span><span class="na">execute</span><span class="o">();</span>
+</pre>
+</div>
+
+
+<p>Yeah it's a long line of code, but that's the best you're going to get considering the amount of work that is done in the background. In fact, almost every method in <code>DatabaseFuture</code> will return its' own reference so you can whip out some mad chain-calling code to your hearts' content. We've got your back. Just don't get too carried away!</p>
+
+<h3>How does it work under the hood?</h3>
+
+<p>It's pretty simple. We dispatch database tasks to a static <code>ExecutorService</code> instance held in <code>com.vexsoftware.ajdbc.util.DatabaseExecution</code> where the work is done for you and either completes successfully or fails completely. Either way, they broadcast what happened to your <code>DatabaseFuture</code> which then notifies the <code>DatabaseCompletionHandler</code>s you added to it. We know that introducing a static global state to a program is bad, especially for unit testing, but we decided to aim for a sanctuary of simplicity in the insane world of asynchronous I/O.</p>
+
+<p>By default for safety purposes, AJDBC will only use a single-threaded executor service for asynchronous database task handling. You can rest assured that, even though you wrote your code with absolutely zero concern for thread safety, AJDBC has you covered. What's that you ask? You want to know if you can you customize which executor service to use? Hell yes you can brother. Like I said, we've got you covered.</p>
+
+<p>If your code is safe to run in a concurrent environment and you're feeling frisky enough though, you can even use a thread pool like so:</p>
+
+<div class="highlight">
+<pre><span class="n">ExecutorService</span> <span class="n">threadPool</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newFixedThreadPool</span><span class="o">(</span><span class="mi">4</span><span class="o">);</span>
+<span class="n">DatabaseExecution</span><span class="o">.</span><span class="na">setExecutorService</span><span class="o">(</span><span class="n">threadPool</span><span class="o">);</span>
+</pre>
+</div>
+
+
+<p>With this setup, any SQL tasks you submit will run in parallel. Just make sure your code can handle it without introducing race conditions. Simplicity and stability take precedence over high performance code that breaks all the time.</p>
+
+<h3>Fallback to synchronous JDBC</h3>
+
+<p>Did we not implement a feature that you need? Sorry about that, man. Here's how your code can easily fallback to icky synchronous JDBC operations. Remember that you can always create an issue on our Github project page and ask us for some new features!</p>
+
+<p>Let's assume we have an <code>AsynchronousConnection</code> whose reference is named <code>ajdbcConnection</code> and we need to do some stuff that JDBC can do but AJDBC can't. We simply call the <code>getConnection()</code> method, which returns a simple JDBC connection, and use it however we need to.</p>
+
+<div class="highlight">
+<pre><span class="n">Connection</span> <span class="n">jdbcConnection</span> <span class="o">=</span> <span class="n">ajdbcConnection</span><span class="o">.</span><span class="na">getConnection</span><span class="o">();</span>
+<span class="n">jdbcConnection</span><span class="o">.</span><span class="na">doSomething</span><span class="o">();</span> <span class="c1">// Done synchronously, but whatever.</span>
+</pre>
+</div>
+
+
+<p>That's all there is to it! Thanks again for checking AJDBC out.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/vexsoftware/ajdbc/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/vexsoftware/ajdbc/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/vexsoftware/ajdbc"></a> is maintained by <a href="https://github.com/vexsoftware">vexsoftware</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
