@@ -43,7 +43,7 @@ public class DatabaseConnectionFactory {
 	 * @return A {@code DatabaseFuture<Connection>} taht can be used to handle
 	 *         the completion of this connection attempt
 	 */
-	public static DatabaseFuture<AsynchronousConnection> getConnection(final String url) {
+	public static DatabaseFuture<AsynchronousConnection> openConnection(final String url) {
 		return new DatabaseFuture<AsynchronousConnection>(new DatabaseTask<AsynchronousConnection>() {
 			@Override
 			protected AsynchronousConnection execute() throws SQLException {
@@ -66,7 +66,7 @@ public class DatabaseConnectionFactory {
 	 * @return A {@code DatabaseFuture<Connection>} that can be used to handle
 	 *         the completion of this connection attempt
 	 */
-	public static DatabaseFuture<AsynchronousConnection> getConnection(final String url, final String user, final String password) {
+	public static DatabaseFuture<AsynchronousConnection> openConnection(final String url, final String user, final String password) {
 		return new DatabaseFuture<AsynchronousConnection>(new DatabaseTask<AsynchronousConnection>() {
 			@Override
 			protected AsynchronousConnection execute() throws SQLException {
