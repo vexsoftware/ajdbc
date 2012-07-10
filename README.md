@@ -19,7 +19,7 @@ Here's how you can open a connection to a database completely asynchronously. Ye
 Class.forName("com.mysql.jdbc.Driver");
 
 // Create our DatabaseFuture object (url is a normal JDBC URL).
-DatabaseFuture<AsynchronousConnection> future = DatabaseConnectionFactory.getConnection(url);
+DatabaseFuture<AsynchronousConnection> future = DatabaseConnectionFactory.openConnection(url);
 
 // Attach a completion handler to our future.
 future.addCompletionHandler(new DatabaseCompletionHandler<AsynchronousConnection>() {
@@ -64,7 +64,7 @@ future.execute();
 ### Shortcuts and call-chaining
 We know how verbose Java can get. It's often _painful_ and sometimes downright _excruciating_. Borderline ridiculous. That's why we created some shortcuts for you. That's right, you can chain your AJDBC method calls to streamline and simplify the task at hand. For instance, you can chain these calls into one line of code:
 ```java
-DatabaseConnectionFactory.getConnection(url).addCompletionHandler(handler).execute();
+DatabaseConnectionFactory.openConnection(url).addCompletionHandler(handler).execute();
 ```
 Yeah it's a long line of code, but that's the best you're going to get considering the amount of work that is done in the background. In fact, almost every method in ```DatabaseFuture``` will return its' own reference so you can whip out some mad chain-calling code to your hearts' content. We've got your back. Just don't get too carried away!
 
