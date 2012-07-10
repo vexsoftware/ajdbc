@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.vexsoftware.ajdbc.PostgreSQLTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.084 sec <<< FAILURE!
+com.vexsoftware.ajdbc.PostgreSQLTest.testQuery()  Time elapsed: 0.006 sec  <<< FAILURE!
+java.lang.NoClassDefFoundError: org/junit/Assert
+	at com.vexsoftware.ajdbc.PostgreSQLTest.testQuery(PostgreSQLTest.java:70)
+Caused by: java.lang.ClassNotFoundException: org.junit.Assert
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:217)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:205)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:321)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:294)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:266)
+	... 19 more
+
