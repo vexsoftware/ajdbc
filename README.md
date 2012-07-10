@@ -1,5 +1,5 @@
 ## AJDBC
-Hey there! We're Vex Software, and thanks for checking our project out. AJDBC (**A**synchronous **J**ava **D**ata**B**ase **C**onnectivity) is a lightweight, simple, and easy to use wrapper library that adds asynchronous functionality to JDBC. It's also a mouthful to pronounce! AJDBC has no dependencies except JRE 1.5, and works with anything that JDBC works with. AJDBC is still unstable and needs to be tested. If you find any bugs, please report them on our [issue page](https://github.com/vexsoftware/ajdbc/issues).
+Hey there! We're Vex Software, and thanks for checking our project out. AJDBC (**A**synchronous **J**ava **D**ata**B**ase **C**onnectivity) is a lightweight, simple, and easy to use wrapper library that adds asynchronous functionality to JDBC. It's also a mouthful to pronounce! AJDBC has no dependencies except JRE 1.5, and works with anything that JDBC works with. AJDBC has been tested and works, but has not yet been tested in a production environment, so we're sorry if you encounter some problems. If you find any bugs, please report them on our [issue page](https://github.com/vexsoftware/ajdbc/issues).
 
 ### Why AJDBC?
 In high performance production environments, SQL is often used for storage. Java comes with a decent but relatively rudimentary solution for this - JDBC. Unfortunately, JDBC is _old_, _outdated_, and simply _not up to par_ in terms of performance and flexible design. At Vex Software, we often found ourselves designing asynchronous callback multi-threaded systems from the ground up for many of our projects to simply maintain decent non-blocking server performance. We were simply surprised to find that, after all these years, the Java community still does not have a functional but simple asynchronous wrapper for the JDBC API. No bueno. We set out to solve this issue with AJDBC.
@@ -7,13 +7,13 @@ In high performance production environments, SQL is often used for storage. Java
 ### Limitations
 Right now, AJDBC can handle the basics - SQL connections, queries, result sets, and prepared statements. We simply don't have the time to implement every single feature that JDBC has to offer right now. Don't worry though - AJDBC provides easy ways for you to seamlessly work with JDBC at the same time although in a synchronous context. If you really would like a specific feature implemented, go ahead and [add an issue](https://github.com/vexsoftware/ajdbc/issues) on our Github project page.
 
-Here's the only catch though: you have to add your ```DatabaseCompletionHandler``` objects _before_ calling ```execute()```, and your queries will not complete (or even begin) until ```execute()``` is called. This ensures that there will be no spooky unexpected behavior occurs, such as the SQL operation finishing in a separate thread before the completion handler even gets added!
+Here's the only catch though: you have to add your ```DatabaseCompletionHandler``` objects _before_ calling ```execute()```, and your queries will not complete (or even begin) until ```execute()``` is called. This ensures that there will be no spooky unexpected behavior that occurs, such as the SQL operation finishing in a separate thread before the completion handler even gets added!
 
 ### Code Examples
 We're programmers ourselves, and we know what programmers like to see when checking out a badass new tool to use - code examples. Enough with the paragraphs of English, it's time for some _Java_ baby. We'll cut right to the chase and show you how simple AJDBC is to use.
 
 #### Opening a connection asynchronously
-Here's how you can open a connection to a database completely asynchronously. Yeah baby.
+Here's how you can open a connection to a database completely asynchronously. Aw yeah.
 ```java
 // Load up your JDBC driver like you normally would.
 Class.forName("com.mysql.jdbc.Driver");
@@ -37,7 +37,7 @@ future.execute(); // Returns immediately.
 ```
 
 #### Executing a query and getting results
-So now we've opened a connection asynchronously and have a reference to it called ```c```. Now we'll show you how to whip out some badass code execute a query totally asynchronously for that connection and obtain a result set.
+So now we've opened a connection asynchronously and have a reference to it called ```c```. Now we'll show you how to whip out some badass code to execute a query totally asynchronously for that connection and obtain a result set.
 ```java
 
 // Create an asynchronous statement.
@@ -76,7 +76,7 @@ By default for safety purposes, AJDBC will only use a single-threaded executor s
  If your code is safe to run in a concurrent environment and you're feeling frisky enough though, you can even use a thread pool like so:
 ```java
 ExecutorService threadPool = Executors.newFixedThreadPool(4);
-DatabaseExecution.setExecutorService(threadPool)
+DatabaseExecution.setExecutorService(threadPool);
 ```
 With this setup, any SQL tasks you submit will run in parallel. Just make sure your code can handle it without introducing race conditions. Simplicity and stability take precedence over high performance code that breaks all the time.
 
